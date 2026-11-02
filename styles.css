@@ -118,6 +118,21 @@ img { display: block; max-width: 100%; height: auto; }
   box-shadow: 0 0 0 1.5px currentColor;
 }
 
+.lang {
+  height: 34px;
+  min-width: 34px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lang:hover, .theme:hover { border-color: var(--muted); }
+
 .eyebrow { color: var(--muted); font-size: 15px; margin-bottom: 10px; }
 
 .hero {
@@ -129,7 +144,7 @@ img { display: block; max-width: 100%; height: auto; }
   padding-bottom: 88px;
 }
 h1 { font-size: clamp(38px, 6vw, 64px); line-height: 1.18; letter-spacing: 0; }
-.lead { margin-top: 22px; max-width: 34em; color: var(--muted); font-size: 18px; }
+:root[lang="en"] h1 { font-size: clamp(30px, 4.6vw, 52px); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 
 .button {
@@ -326,12 +341,18 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
 
 @media (max-width: 560px) {
   .wrap { padding-left: 16px; padding-right: 16px; }
-  .top { padding: 10px 16px; gap: 12px; }
+  .top { padding: 10px 16px; gap: 10px; }
   .top nav { gap: 12px; font-size: 14px; }
+  .top nav a[href^="https"] { display: none; }
   .chart-card { padding: 16px; }
   .segmented button { padding: 7px 10px; font-size: 14px; }
   .bar { grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
   .bar .tip { left: 0; white-space: normal; }
+}
+
+@media (max-width: 360px) {
+  .top nav { display: none; }
+  .lang { margin-left: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
