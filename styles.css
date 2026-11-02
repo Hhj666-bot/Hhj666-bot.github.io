@@ -144,7 +144,8 @@ img { display: block; max-width: 100%; height: auto; }
   padding-bottom: 88px;
 }
 h1 { font-size: clamp(38px, 6vw, 64px); line-height: 1.18; letter-spacing: 0; }
-:root[lang="en"] h1 { font-size: clamp(30px, 4.6vw, 52px); }
+.hero-copy { container-type: inline-size; }
+:root[lang="en"] h1 { font-size: min(7.6cqw, 56px); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 
 .button {

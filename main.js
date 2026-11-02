@@ -96,7 +96,7 @@
     navTools: 'Tools',
     themeLabel: 'Toggle light and dark mode',
     heroEyebrow: 'The Chinese University of Hong Kong, Shenzhen · CSE undergraduate',
-    heroTitle: 'Bringing different AIs<br>under one roof',
+    heroTitle: 'Bringing different agents<br>under one roof',
     heroProjects: 'View projects',
     heroResearch: 'Read the research',
     skylineLabel: 'A building whose windows light up and dim',
