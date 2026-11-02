@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hhj · 个人主页</title>
+  <meta name="description" content="hhj，香港中文大学（深圳）CSE 本科生。HiveLab 合屋、灰烬征召模组和匹配机制研究。">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+
+  <header class="top">
+    <a class="brand" href="#main" aria-label="hhj 首页">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><use href="#mark"/></svg>
+      <span>hhj</span>
+    </a>
+    <nav aria-label="页面导航">
+      <a href="#hivelab">项目</a>
+      <a href="#research">研究</a>
+      <a href="#tools">小工具</a>
+      <a href="https://github.com/Hhj666-bot">GitHub</a>
+    </nav>
+    <button class="theme" type="button" aria-label="切换深浅色">
+      <span aria-hidden="true"></span>
+    </button>
+  </header>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="mark" viewBox="0 0 512 512">
+      <path fill="currentColor" d="M128 136C128 114 146 96 168 96C190 96 208 114 208 136V376C208 398 190 416 168 416C146 416 128 398 128 376Z"/>
+      <path fill="currentColor" d="M232 222C251 198 278 184 308 184C365 184 400 227 400 288V376C400 398 382 416 360 416C338 416 320 398 320 376V288C320 270 311 260 296 260C273 260 252 277 232 300Z"/>
+    </symbol>
+  </svg>
+
+  <main id="main">
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">香港中文大学（深圳）· CSE 本科生</p>
+        <h1>把不同的 AI<br>请进同一间屋子</h1>
+        <p class="lead">我是 hhj。现在主要在做 HiveLab 合屋，一个装在本机的多成员 AI 工作台；也写 Minecraft 模组，还和同学一起研究过游戏匹配机制。</p>
+        <div class="actions">
+          <a class="button primary" href="#hivelab">看看项目</a>
+          <a class="button" href="#research">读研究结果</a>
+        </div>
+      </div>
+      <svg id="skyline" class="skyline" viewBox="0 0 420 330" role="img" aria-label="一栋窗户明暗变化的屋子"></svg>
+    </section>
+
+    <section id="hivelab" class="feature wrap">
+      <div class="feature-copy">
+        <p class="eyebrow">主要项目 · 开发中</p>
+        <h2>HiveLab 合屋</h2>
+        <p>本机多成员 AI 桌面工作台。把 Claude Code、Codex、DeepSeek 等编程助手请进同一个窗口：讨论过程公开可见，任务审批、文件差异和成果验收都在一处完成，每位成员用各自的原生执行端和独立登录工作。</p>
+        <ul class="points">
+          <li>界面、Electron 主进程、后台执行服务三进程分工</li>
+          <li>SQLite 保存业务数据和事件流</li>
+          <li>单元、集成、界面和桌面冒烟测试</li>
+        </ul>
+        <p class="tags">Electron · React · TypeScript · SQLite</p>
+        <p class="note">基于开源项目 <a href="https://github.com/tonyAmadeus/offAice">offAice</a> 持续开发，源码整理中，暂未公开。</p>
+      </div>
+      <div class="house" aria-hidden="true">
+        <div class="rooms">
+          <span>Claude Code</span><span>Codex</span><span>DeepSeek</span>
+          <span>Kimi</span><span>Gemini</span><span>ZCode</span>
+        </div>
+        <ol class="flow"><li>讨论</li><li>审批</li><li>差异</li><li>验收</li></ol>
+      </div>
+    </section>
+
+    <section class="ashen">
+      <div class="wrap ashen-grid">
+        <div>
+          <p class="eyebrow">Minecraft 模组 · 非官方同人原型</p>
+          <h2>灰烬征召 Ashen Draft</h2>
+          <p>Minecraft × 战锤 40,000 生存模组技术样机，目前是 v0.9。招募三种兵种，多选指挥、单兵配装；沿荒原土路走进程序化生成的分层巢都，贿赂或击败守卫，从底巢一路往上走。还没有剧情任务系统。</p>
+          <dl class="facts">
+            <div><dt>32</dt><dd>单位军队上限</dd></div>
+            <div><dt>8</dt><dd>持久化编队</dd></div>
+            <div><dt>47</dt><dd>项游戏服务器测试</dd></div>
+          </dl>
+          <p class="tags">Java 21 · NeoForge 1.21.1</p>
+          <p><a class="button light" href="https://github.com/Hhj666-bot/Ashen-Draft">查看源码</a></p>
+        </div>
+        <figure>
+          <img src="assets/hive-facade.png" alt="程序化生成的巢都外立面：层层退台的塔楼和亮着灯的窗" width="1200" height="506" loading="lazy">
+          <figcaption>程序化外立面投影，非游戏截图</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="research" class="research wrap">
+      <header class="section-head">
+        <p class="eyebrow">研究 · ECE3280 四人小组课程项目</p>
+        <h2>对手怎么配，比分数怎么算更重要</h2>
+        <p>我们搭了一个可配置的基准框架，用 1 万名模拟玩家和 50 万场 1v1 对局，比较 Random、Elo、MMR 和我们提出的 MMRv2 四种机制。</p>
+      </header>
+
+      <div class="chart-card">
+        <div class="controls">
+          <div class="segmented" role="group" aria-label="选择指标" id="metric">
+            <button type="button" data-value="healthy" aria-pressed="true">健康玩家占比</button>
+            <button type="button" data-value="spearman" aria-pressed="false">排名准确度</button>
+            <button type="button" data-value="converge" aria-pressed="false">收敛场次</button>
+          </div>
+          <div class="segmented" role="group" aria-label="选择赛季" id="season">
+            <button type="button" data-value="s1" aria-pressed="true">第一赛季</button>
+            <button type="button" data-value="s2" aria-pressed="false">第二赛季</button>
+          </div>
+        </div>
+        <h3 id="chart-title"></h3>
+        <p class="chart-sub" id="chart-sub"></p>
+        <div class="bars" id="bars"></div>
+        <p class="chart-foot" id="chart-foot"></p>
+        <details>
+          <summary>查看全部数据</summary>
+          <div class="table-wrap"><table id="data-table"></table></div>
+        </details>
+      </div>
+
+      <div class="findings">
+        <article>
+          <h3>匹配比算分更重要</h3>
+          <p>赛后更新公式几乎相同，只改匹配方式，Elo 的健康玩家占比就比 Random 高 55.4 个百分点。</p>
+        </article>
+        <article>
+          <h3>公平和速度要取舍</h3>
+          <p>MMRv2 的健康玩家最多，达到 89.25%，但收敛也最慢，要 22.2 万场。</p>
+        </article>
+        <article>
+          <h3>排名差距其实不大</h3>
+          <p>四种机制最终的 Spearman 都在 0.93 到 0.96 之间，差别主要落在玩家体验上。</p>
+        </article>
+      </div>
+
+      <p class="paper">
+        <strong>A Benchmark Framework for Skill Rating Mechanisms in Competitive Games</strong><br>
+        Fu Yile, Xu Haimin, Zhao Wenbo, Yan Zheng ·
+        <a href="https://github.com/max4877654/ECE3280-Skill-Rating-Benchmark">小组公开仓库</a>
+      </p>
+    </section>
+
+    <section id="tools" class="tools wrap">
+      <header class="section-head">
+        <p class="eyebrow">小工具</p>
+        <h2>解决自己的日常问题</h2>
+      </header>
+      <div class="tool-grid">
+        <article>
+          <h3>Dayline</h3>
+          <p>中英双语日程与周课表。支持每周重复课程和冲突提醒，可导出 PDF、PNG 和日历文件。数据只存在你的浏览器里。</p>
+          <p class="links"><a class="button primary" href="dayline/">在线试用</a><a class="button" href="https://github.com/Hhj666-bot/Dayline">源码</a></p>
+        </article>
+        <article>
+          <h3>羽毛球场地预订助手</h3>
+          <p>Tampermonkey 用户脚本。按场地优先顺序选场，核对时段后填写预订表单，不读取密码和 Cookie。</p>
+          <p class="links"><a class="button" href="https://github.com/Hhj666-bot/badminton-helper">源码</a></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <p>hhj · 香港中文大学（深圳）CSE</p>
+    <p><a href="https://github.com/Hhj666-bot">github.com/Hhj666-bot</a></p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

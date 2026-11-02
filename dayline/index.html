@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>日程线 / Dayline — 每日行程与课表 / Daily Planner</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="./"
+        >▦ <span>日程线 <small>DAYLINE</small></span></a
+      ><span class="badge">我的学习空间 / My study space</span
+      ><button id="add" class="primary">＋ 新建安排 / New event</button>
+    </header>
+    <main>
+      <section class="heading">
+        <div>
+          <p class="eyebrow">规划时间，留白生活 / PLAN YOUR TIME</p>
+          <h1>把每一天，安排好。<span>Make time for what matters.</span></h1>
+        </div>
+        <p class="storage">
+          本机保存 / Saved on this device<br /><small
+            >同一浏览器保留数据 / Data stays in this browser</small
+          >
+        </p>
+      </section>
+      <section class="toolbar">
+        <div class="views">
+          <button id="weekView" class="active">周课表 / Week</button
+          ><button id="dayView">每日行程 / Day</button>
+        </div>
+        <div class="navigation">
+          <button
+            id="exportWeek"
+            title="导出所选周的日历文件 / Export selected week as a calendar file"
+          >
+            ↓ 导出本周 / Export week</button
+          ><button id="prev" aria-label="上一页 / Previous">←</button
+          ><button id="today">今天 / Today</button
+          ><button id="next" aria-label="下一页 / Next">→</button
+          ><label class="date-label"
+            >日期 / Date <input type="date" id="selectedDate"
+          /></label>
+        </div>
+      </section>
+      <div class="workspace">
+        <section class="calendar">
+          <div class="calendar-title">
+            <h2 id="range"></h2>
+            <span>点击安排以编辑 / Select an event to edit</span>
+          </div>
+          <div id="board"></div>
+        </section>
+        <aside>
+          <div class="aside-title">
+            <p class="eyebrow">DAILY FOCUS / 每日聚焦</p>
+            <h2 id="dayTitle"></h2>
+          </div>
+          <div id="summary"></div>
+          <div id="agenda"></div>
+          <div class="tip">
+            <strong>留一点空白 / Leave some room</strong>
+            <p>
+              课程之外，也为休息和生活留出时间。<br />Make space for rest between your
+              plans.
+            </p>
+          </div>
+        </aside>
+      </div>
+      <footer>
+        <span
+          >课程 / Course <i class="dot course"></i>　学习 / Study
+          <i class="dot study"></i>　生活 / Life <i class="dot life"></i></span
+        ><span
+          >每周重复课程 · 时间冲突提示<br />Weekly recurring classes · Conflict
+          detection</span
+        >
+      </footer>
+      <p id="notice" role="status" aria-live="polite"></p>
+    </main>
+    <dialog id="editor">
+      <form id="form">
+        <div class="dialog-heading">
+          <h2 id="formTitle">新建安排 / New event</h2>
+          <button type="button" id="close" aria-label="关闭 / Close">✕</button>
+        </div>
+        <label
+          >名称 / Title<input
+            name="title"
+            required
+            maxlength="100"
+            placeholder="例如：计算机网络 / e.g. Computer Networks"
+        /></label>
+        <div class="row">
+          <label
+            >类型 / Category<select name="category">
+              <option value="course">课程 / Course</option>
+              <option value="study">学习 / Study</option>
+              <option value="life">生活 / Life</option>
+            </select></label
+          ><label>日期 / Date<input name="date" type="date" required /></label>
+        </div>
+        <div class="row">
+          <label
+            >开始时间 / Start time<input
+              name="start"
+              type="time"
+              required
+              value="09:00" /></label
+          ><label
+            >结束时间 / End time<input name="end" type="time" required value="10:00"
+          /></label>
+        </div>
+        <label
+          >地点 / Location<input
+            name="location"
+            maxlength="100"
+            placeholder="教室或线上链接 / Room or online link" /></label
+        ><label
+          >备注 / Notes<textarea name="notes" rows="2" maxlength="500"></textarea></label
+        ><label class="check"
+          ><input name="repeat" type="checkbox" />每周同一天重复 / Repeat weekly on this
+          day</label
+        ><label id="untilLabel" hidden
+          >重复截止日期 / Repeat until<input name="until" type="date"
+        /></label>
+        <p class="hint">
+          编辑或删除重复安排会影响整个系列。<br />Editing or deleting a recurring event
+          affects the whole series.
+        </p>
+        <p id="error" role="alert"></p>
+        <div class="actions">
+          <button type="button" id="delete" class="danger" hidden>删除 / Delete</button
+          ><button type="button" id="cancel">取消 / Cancel</button
+          ><button type="submit" class="primary">保存安排 / Save event</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="exportDialog" aria-labelledby="exportTitle">
+      <div class="dialog-heading">
+        <h2 id="exportTitle">导出本周 / Export week</h2>
+        <button id="closeExport" aria-label="关闭 / Close">✕</button>
+      </div>
+      <p>导出当前所选日期所在的一周。 / Export the week containing the selected date.</p>
+      <label for="exportFormat">导出方式 / Format</label>
+      <select id="exportFormat">
+        <option value="png">PNG 图片 / PNG image</option>
+        <option value="pdf">PDF 单页周课表 / Single-page PDF</option>
+        <option value="ics">系统日历（ICS）/ Calendar (ICS)</option>
+      </select>
+      <p id="pdfHelp" hidden>
+        直接下载一页横向周计划，每天的事项依次罗列。 / Download a single-page landscape
+        weekly planner with compact daily lists.
+      </p>
+      <div id="calendarHelp" hidden>
+        <p>
+          下载后，请按使用的日历软件导入。 / After downloading, import using your calendar
+          app.
+        </p>
+        <p>
+          <strong>Mac · Apple Calendar</strong><br />打开“日历”，选择“文件 → 导入”，选择
+          ICS 文件。 / Open Calendar → File → Import and select the ICS file.
+        </p>
+        <p>
+          <strong>Windows · Outlook</strong><br />新版或网页版：日历 → 添加日历 →
+          从文件上传。经典版：文件 → 打开和导出 → 导入/导出 → iCalendar。 / New or web:
+          Calendar → Add calendar → Upload from file. Classic: File → Open &amp; Export →
+          Import/Export → iCalendar.
+        </p>
+        <p>
+          其他设备：在支持 ICS 的日历软件中导入。 / Other devices: import in an
+          ICS-compatible calendar app.
+        </p>
+        <p>
+          仅导入所选周，不会自动同步后续修改。时间按目标日历的本地时间解释，导入前请核对时区。
+          / Only the selected week is imported; later edits do not sync. Times use the
+          destination calendar’s local time; check its time zone.
+        </p>
+      </div>
+      <p id="exportStatus" role="status"></p>
+      <button id="runExport" class="primary">开始导出 / Export</button>
+    </dialog>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
