@@ -29,63 +29,100 @@
   const storedTheme = loadSetting(THEME_KEY);
   if (storedTheme === 'light' || storedTheme === 'dark') root.dataset.theme = storedTheme;
 
-  document.querySelector('.theme').addEventListener('click', () => {
-    const next = currentTheme() === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    saveSetting(THEME_KEY, next);
-  });
+  // The scene is a fixed city of lit windows. It is what the glass panels refract,
+  // so it is drawn once per size or theme on a canvas, with a few lights on top.
+  const canvas = document.getElementById('scene');
+  const lights = document.getElementById('scene-lights');
+  let sceneSize = '';
 
-  function drawSkyline() {
-    const svg = document.getElementById('skyline');
-    const ns = 'http://www.w3.org/2000/svg';
-    const heights = [3, 5, 4, 7, 6, 9, 8, 10, 8, 9, 6, 7, 4, 3];
-    const ground = 318;
-    const stepX = 28;
-    const stepY = 28;
-    let seed = 7;
+  function drawScene(force) {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const size = `${width}x${Math.round(height / 120)}`;
+    if (!force && size === sceneSize) return;
+    sceneSize = size;
+
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    const context = canvas.getContext('2d');
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.clearRect(0, 0, width, height);
+
+    const style = getComputedStyle(root);
+    const color = (name) => style.getPropertyValue(name).trim();
+    let seed = 11;
     const random = () => {
       seed = (seed * 16807) % 2147483647;
       return (seed - 1) / 2147483646;
     };
-    const add = (tag, attributes) => {
-      const node = document.createElementNS(ns, tag);
-      Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
-      svg.append(node);
-      return node;
-    };
+    const candidates = [];
 
-    heights.forEach((rows, index) => {
-      const x = 16 + index * stepX;
-      const top = ground - rows * stepY - 6;
-      add('rect', { class: 'body', x: x - 5, y: top, width: stepX, height: ground - top });
-      if (rows >= 7) {
-        add('path', {
-          class: 'body',
-          d: `M${x - 5} ${top}L${x + 9} ${top - 26}L${x + 23} ${top}Z`,
-        });
-      }
-    });
-
-    heights.forEach((rows, index) => {
-      const x = 16 + index * stepX;
-      for (let row = 0; row < rows; row += 1) {
-        const roll = random();
-        const className = roll < 0.2 ? 'pulse' : roll < 0.4 ? 'lit' : 'off';
-        const cell = add('rect', {
-          class: className,
-          x,
-          y: ground - (row + 1) * stepY,
-          width: 18,
-          height: 22,
-          rx: 2,
-        });
-        if (className === 'pulse') {
-          cell.style.animationDelay = `-${(random() * 9).toFixed(1)}s`;
+    function layer(options) {
+      let x = -random() * 40;
+      while (x < width) {
+        const w = options.minWidth + random() * (options.maxWidth - options.minWidth);
+        const h = height * (options.minHeight + random() * (options.maxHeight - options.minHeight));
+        const top = height - h;
+        context.fillStyle = options.body;
+        context.fillRect(x, top, w, h);
+        if (options.spires && random() < 0.35) {
+          context.beginPath();
+          context.moveTo(x, top);
+          context.lineTo(x + w / 2, top - Math.min(60, w * 0.6));
+          context.lineTo(x + w, top);
+          context.fill();
         }
+        const columns = Math.max(1, Math.floor((w - options.pad) / options.stepX));
+        const offset = x + (w - columns * options.stepX + options.stepX - options.cellW) / 2;
+        for (let row = top + options.pad; row + options.cellH < height - 4; row += options.stepY) {
+          for (let column = 0; column < columns; column += 1) {
+            const cx = offset + column * options.stepX;
+            const lit = random() < options.lit;
+            context.globalAlpha = lit ? options.litAlpha : options.offAlpha;
+            context.fillStyle = lit ? options.litColor : color('--win-off');
+            context.fillRect(cx, row, options.cellW, options.cellH);
+            if (lit && options.pulses && row > height * 0.35) candidates.push([cx, row, options.cellW, options.cellH]);
+          }
+        }
+        context.globalAlpha = 1;
+        x += w + options.gap;
       }
+    }
+
+    layer({
+      body: color('--far'), minWidth: 44, maxWidth: 96, minHeight: 0.34, maxHeight: 0.7,
+      stepX: 14, stepY: 18, cellW: 6, cellH: 9, pad: 10, gap: 4,
+      lit: 0.14, litColor: color('--win-far'), litAlpha: 0.75, offAlpha: 0.45,
     });
-    add('rect', { class: 'ground', x: 0, y: ground, width: 420, height: 3 });
+    layer({
+      body: color('--near'), minWidth: 70, maxWidth: 150, minHeight: 0.14, maxHeight: 0.44,
+      stepX: 20, stepY: 26, cellW: 11, cellH: 15, pad: 14, gap: 10, spires: true,
+      lit: 0.24, litColor: color('--win-lit'), litAlpha: 1, offAlpha: 0.9, pulses: true,
+    });
+
+    lights.replaceChildren(...candidates
+      .sort(() => random() - 0.5)
+      .slice(0, 16)
+      .map(([x, y, w, h], index) => {
+        const light = document.createElement('span');
+        light.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;animation-delay:-${(index * 1.7) % 11}s`;
+        return light;
+      }));
   }
+
+  document.querySelector('.theme').addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    saveSetting(THEME_KEY, next);
+    drawScene(true);
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => drawScene(true));
+  let resizeFrame = 0;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => drawScene(false));
+  });
 
   // Chinese text lives in index.html; this table only adds the English version.
   const ENGLISH = {
@@ -97,9 +134,12 @@
     themeLabel: 'Toggle light and dark mode',
     heroEyebrow: 'The Chinese University of Hong Kong, Shenzhen · CSE undergraduate',
     heroTitle: 'Bringing different agents<br>under one roof',
+    heroStatus: 'Currently building HiveLab',
     heroProjects: 'View projects',
-    heroResearch: 'Read the research',
-    skylineLabel: 'A building whose windows light up and dim',
+    heroResearch: 'Research',
+    labelProjects: 'Projects',
+    labelResearch: 'Research',
+    labelTools: 'Tools',
     hiveEyebrow: 'Main project · In development',
     hiveTitle: 'HiveLab',
     hiveBody: 'A local, multi-member AI desktop workspace. It brings coding assistants such as Claude Code, Codex and DeepSeek into one window: discussions stay visible, task approval, file diffs and acceptance all happen in one place, and each member works through its own native runtime and separate login.',
@@ -120,7 +160,7 @@
     viewSource: 'View source',
     facadeAlt: 'Procedurally generated hive facade with stepped towers and lit windows',
     facadeCaption: 'Procedural facade projection, not an in-game screenshot',
-    researchEyebrow: 'Research · ECE3280 four-person course project',
+    researchEyebrow: 'ECE3280 four-person course project',
     researchTitle: 'Who you face matters more than how scores update',
     researchBody: 'We built a configurable benchmark framework and compared Random, Elo, MMR and our proposed MMRv2 using 10,000 simulated players and 500,000 1v1 matches.',
     metricLabel: 'Choose a metric',
@@ -138,8 +178,6 @@
     finding3Title: 'Ranking accuracy barely differs',
     finding3Body: 'All four mechanisms finish with a Spearman between 0.93 and 0.96. The real difference lies in player experience.',
     paperRepo: 'Group repository',
-    toolsEyebrow: 'Tools',
-    toolsTitle: 'Solving everyday problems',
     daylineBody: 'A bilingual daily planner and weekly timetable with recurring classes and conflict warnings. It exports to PDF, PNG and calendar files, and your data stays in your browser.',
     tryOnline: 'Try it online',
     source: 'Source',
@@ -354,7 +392,7 @@
     });
   }
 
-  drawSkyline();
+  drawScene(true);
   bindSegmented('metric', 'metric');
   bindSegmented('season', 'season');
   applyLanguage(preferredLanguage());
